@@ -128,17 +128,13 @@ func TestDNSProviderLive(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	client.ExcludeChallenges([]acme.Challenge{acme.HTTP01, acme.TLSSNI01})
+	client.ExcludeChallenges([]acme.Challenge{acme.HTTP01})
 	// register and agree tos
-	reg, err := client.Register()
+	reg, err := client.Register(true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	myUser.Registration = reg
-	err = client.AgreeToTOS()
-	if err != nil {
-		t.Fatal(err)
-	}
 	// complete the challenge
 	bundle := false
 	_, failures := client.ObtainCertificate([]string{domain}, bundle, nil, false)
