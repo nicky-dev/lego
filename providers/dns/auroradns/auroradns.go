@@ -2,12 +2,13 @@ package auroradns
 
 import (
 	"fmt"
+	"os"
+	"sync"
+
 	"github.com/edeckers/auroradnsclient"
 	"github.com/edeckers/auroradnsclient/records"
 	"github.com/edeckers/auroradnsclient/zones"
-	"github.com/xenolf/lego/acme"
-	"os"
-	"sync"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // DNSProvider describes a provider for AuroraDNS

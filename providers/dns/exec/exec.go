@@ -31,7 +31,7 @@ import (
 	"os/exec"
 	"strconv"
 
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // DNSProvider adds and removes the record for the DNS challenge by calling a

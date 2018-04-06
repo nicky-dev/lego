@@ -10,9 +10,10 @@ import (
 
 	"bytes"
 	"encoding/json"
-	"github.com/xenolf/lego/acme"
 	"io/ioutil"
 	"strings"
+
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // GoDaddyAPIURL represents the API endpoint to call.

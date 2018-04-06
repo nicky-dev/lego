@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // DNSProvider is an implementation of the acme.ChallengeProvider interface that
@@ -27,7 +27,7 @@ type DNSProvider struct {
 // dynamic update. Configured with environment variables:
 // RFC2136_NAMESERVER: Network address in the form "host" or "host:port".
 // RFC2136_TSIG_ALGORITHM: Defaults to hmac-md5.sig-alg.reg.int. (HMAC-MD5).
-// See https://github.com/miekg/dns/blob/master/tsig.go for supported values. 
+// See https://github.com/miekg/dns/blob/master/tsig.go for supported values.
 // RFC2136_TSIG_KEY: Name of the secret key as defined in DNS server configuration.
 // RFC2136_TSIG_SECRET: Secret key payload.
 // RFC2136_TIMEOUT: DNS propagation timeout in time.ParseDuration format. (60s)
@@ -88,7 +88,7 @@ func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKey, tsigSecret, t
 
 // Returns the timeout configured with RFC2136_TIMEOUT, or 60s.
 func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
-    return d.timeout, 2 * time.Second
+	return d.timeout, 2 * time.Second
 }
 
 // Present creates a TXT record using the specified parameters

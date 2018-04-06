@@ -4,9 +4,10 @@ package dns
 import (
 	"fmt"
 
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 	"github.com/xenolf/lego/providers/dns/auroradns"
 	"github.com/xenolf/lego/providers/dns/azure"
+	"github.com/xenolf/lego/providers/dns/bluecat"
 	"github.com/xenolf/lego/providers/dns/cloudflare"
 	"github.com/xenolf/lego/providers/dns/cloudxns"
 	"github.com/xenolf/lego/providers/dns/digitalocean"
@@ -35,7 +36,6 @@ import (
 	"github.com/xenolf/lego/providers/dns/rfc2136"
 	"github.com/xenolf/lego/providers/dns/route53"
 	"github.com/xenolf/lego/providers/dns/vultr"
-	"github.com/xenolf/lego/providers/dns/bluecat"
 )
 
 func NewDNSChallengeProviderByName(name string) (acme.ChallengeProvider, error) {

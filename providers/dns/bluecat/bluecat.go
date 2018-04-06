@@ -13,8 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xenolf/lego/acme"
 	"io/ioutil"
+
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 const bluecatUrlTemplate = "%s/Services/REST/v1"
@@ -240,8 +241,8 @@ func (d *DNSProvider) lookupParentZoneId(viewId uint, fqdn string) (uint, string
 			if err != nil || zoneId == 0 {
 				return parentViewId, name, err
 			}
-			if (i > 0) {
-				name = strings.Join(zones[0:i],".")
+			if i > 0 {
+				name = strings.Join(zones[0:i], ".")
 			}
 			parentViewId = zoneId
 		}
@@ -297,13 +298,13 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	parentZoneId, name, err := d.lookupParentZoneId(viewId, fqdn)
 
 	queryArgs := map[string]string{
-		"parentId":     strconv.FormatUint(uint64(parentZoneId), 10),
+		"parentId": strconv.FormatUint(uint64(parentZoneId), 10),
 	}
 
 	body := bluecatEntity{
-		Name:		name,
-		Type:		"TXTRecord",
-		Properties:	fmt.Sprintf("ttl=%d|absoluteName=%s|txt=%s|", ttl, fqdn, value),
+		Name:       name,
+		Type:       "TXTRecord",
+		Properties: fmt.Sprintf("ttl=%d|absoluteName=%s|txt=%s|", ttl, fqdn, value),
 	}
 
 	resp, err := d.sendRequest("POST", "addEntity", body, queryArgs)
@@ -411,8 +412,8 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 
 //JSON body for Bluecat entity requests and responses
 type bluecatEntity struct {
-	ID      string `json:"id,omitempty"`
-	Name    string `json:"name"`
-	Type    string `json:"type"`
+	ID         string `json:"id,omitempty"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
 	Properties string `json:"properties"`
 }

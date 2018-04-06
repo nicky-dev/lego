@@ -7,7 +7,7 @@ import (
 
 	configdns "github.com/akamai/AkamaiOPEN-edgegrid-golang/configdns-v1"
 	"github.com/akamai/AkamaiOPEN-edgegrid-golang/edgegrid"
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // DNSProvider is an implementation of the acme.ChallengeProvider interface.

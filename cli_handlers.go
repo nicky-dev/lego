@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/urfave/cli"
-	"github.com/xenolf/lego/acmev2"
+	acme "github.com/xenolf/lego/acmev2"
 	"github.com/xenolf/lego/providers/dns"
 	"github.com/xenolf/lego/providers/http/memcached"
 	"github.com/xenolf/lego/providers/http/webroot"

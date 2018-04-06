@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // stagingServer is the Let's Encrypt staging server used by the live test

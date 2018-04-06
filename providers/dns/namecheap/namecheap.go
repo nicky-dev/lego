@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xenolf/lego/acme"
+	acme "github.com/xenolf/lego/acmev2"
 )
 
 // Notes about namecheap's tool API:
