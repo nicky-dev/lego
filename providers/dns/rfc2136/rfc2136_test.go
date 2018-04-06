@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 var (
@@ -27,7 +27,7 @@ var (
 var reqChan = make(chan *dns.Msg, 10)
 
 func TestRFC2136CanaryLocalTestServer(t *testing.T) {
-	acme.ClearFqdnCache()
+	acmev2.ClearFqdnCache()
 	dns.HandleFunc("example.com.", serverHandlerHello)
 	defer dns.HandleRemove("example.com.")
 
@@ -51,7 +51,7 @@ func TestRFC2136CanaryLocalTestServer(t *testing.T) {
 }
 
 func TestRFC2136ServerSuccess(t *testing.T) {
-	acme.ClearFqdnCache()
+	acmev2.ClearFqdnCache()
 	dns.HandleFunc(rfc2136TestZone, serverHandlerReturnSuccess)
 	defer dns.HandleRemove(rfc2136TestZone)
 
@@ -71,7 +71,7 @@ func TestRFC2136ServerSuccess(t *testing.T) {
 }
 
 func TestRFC2136ServerError(t *testing.T) {
-	acme.ClearFqdnCache()
+	acmev2.ClearFqdnCache()
 	dns.HandleFunc(rfc2136TestZone, serverHandlerReturnErr)
 	defer dns.HandleRemove(rfc2136TestZone)
 
@@ -93,7 +93,7 @@ func TestRFC2136ServerError(t *testing.T) {
 }
 
 func TestRFC2136TsigClient(t *testing.T) {
-	acme.ClearFqdnCache()
+	acmev2.ClearFqdnCache()
 	dns.HandleFunc(rfc2136TestZone, serverHandlerReturnSuccess)
 	defer dns.HandleRemove(rfc2136TestZone)
 
@@ -113,7 +113,7 @@ func TestRFC2136TsigClient(t *testing.T) {
 }
 
 func TestRFC2136ValidUpdatePacket(t *testing.T) {
-	acme.ClearFqdnCache()
+	acmev2.ClearFqdnCache()
 	dns.HandleFunc(rfc2136TestZone, serverHandlerPassBackRequest)
 	defer dns.HandleRemove(rfc2136TestZone)
 

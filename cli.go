@@ -11,7 +11,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/urfave/cli"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 // Logger is used to log errors; if nil, the default log.Logger is used.
@@ -39,7 +39,7 @@ func main() {
 
 	app.Version = version
 
-	acme.UserAgent = "lego/" + app.Version
+	acmev2.UserAgent = "lego/" + app.Version
 
 	defaultPath := ""
 	cwd, err := os.Getwd()

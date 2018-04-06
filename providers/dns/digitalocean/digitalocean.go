@@ -11,10 +11,10 @@ import (
 	"sync"
 	"time"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
-// DNSProvider is an implementation of the acme.ChallengeProvider interface
+// DNSProvider is an implementation of the acmev2.ChallengeProvider interface
 // that uses DigitalOcean's REST API to manage TXT records for a domain.
 type DNSProvider struct {
 	apiAuthToken string
@@ -61,14 +61,14 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 		} `json:"domain_record"`
 	}
 
-	fqdn, value, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, value, _ := acmev2.DNS01Record(domain, keyAuth)
 
-	authZone, err := acme.FindZoneByFqdn(acme.ToFqdn(domain), acme.RecursiveNameservers)
+	authZone, err := acmev2.FindZoneByFqdn(acmev2.ToFqdn(domain), acmev2.RecursiveNameservers)
 	if err != nil {
 		return fmt.Errorf("Could not determine zone for domain: '%s'. %s", domain, err)
 	}
 
-	authZone = acme.UnFqdn(authZone)
+	authZone = acmev2.UnFqdn(authZone)
 
 	reqURL := fmt.Sprintf("%s/v2/domains/%s/records", digitalOceanBaseURL, authZone)
 	reqData := txtRecordRequest{RecordType: "TXT", Name: fqdn, Data: value}
@@ -112,7 +112,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 
 // CleanUp removes the TXT record matching the specified parameters
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, _, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, _, _ := acmev2.DNS01Record(domain, keyAuth)
 
 	// get the record's unique ID from when we created it
 	d.recordIDsMu.Lock()
@@ -122,12 +122,12 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 		return fmt.Errorf("unknown record ID for '%s'", fqdn)
 	}
 
-	authZone, err := acme.FindZoneByFqdn(acme.ToFqdn(domain), acme.RecursiveNameservers)
+	authZone, err := acmev2.FindZoneByFqdn(acmev2.ToFqdn(domain), acmev2.RecursiveNameservers)
 	if err != nil {
 		return fmt.Errorf("Could not determine zone for domain: '%s'. %s", domain, err)
 	}
 
-	authZone = acme.UnFqdn(authZone)
+	authZone = acmev2.UnFqdn(authZone)
 
 	reqURL := fmt.Sprintf("%s/v2/domains/%s/records/%d", digitalOceanBaseURL, authZone, recordID)
 	req, err := http.NewRequest("DELETE", reqURL, nil)

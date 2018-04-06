@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/urfave/cli"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 // Configuration type from CLI and config files.
@@ -22,27 +22,27 @@ func NewConfiguration(c *cli.Context) *Configuration {
 }
 
 // KeyType the type from which private keys should be generated
-func (c *Configuration) KeyType() (acme.KeyType, error) {
+func (c *Configuration) KeyType() (acmev2.KeyType, error) {
 	switch strings.ToUpper(c.context.GlobalString("key-type")) {
 	case "RSA2048":
-		return acme.RSA2048, nil
+		return acmev2.RSA2048, nil
 	case "RSA4096":
-		return acme.RSA4096, nil
+		return acmev2.RSA4096, nil
 	case "RSA8192":
-		return acme.RSA8192, nil
+		return acmev2.RSA8192, nil
 	case "EC256":
-		return acme.EC256, nil
+		return acmev2.EC256, nil
 	case "EC384":
-		return acme.EC384, nil
+		return acmev2.EC384, nil
 	}
 
 	return "", fmt.Errorf("Unsupported KeyType: %s", c.context.GlobalString("key-type"))
 }
 
 // ExcludedSolvers is a list of solvers that are to be excluded.
-func (c *Configuration) ExcludedSolvers() (cc []acme.Challenge) {
+func (c *Configuration) ExcludedSolvers() (cc []acmev2.Challenge) {
 	for _, s := range c.context.GlobalStringSlice("exclude") {
-		cc = append(cc, acme.Challenge(s))
+		cc = append(cc, acmev2.Challenge(s))
 	}
 	return
 }

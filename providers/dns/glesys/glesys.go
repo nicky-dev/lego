@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 // GleSYS API reference: https://github.com/GleSYS/API/wiki/API-Documentation
@@ -38,7 +38,7 @@ func logf(format string, args ...interface{}) {
 }
 
 // DNSProvider is an implementation of the
-// acme.ChallengeProviderTimeout interface that uses GleSYS
+// acmev2.ChallengeProviderTimeout interface that uses GleSYS
 // API to manage TXT records for a domain.
 type DNSProvider struct {
 	apiUser       string
@@ -71,12 +71,12 @@ func NewDNSProviderCredentials(apiUser string, apiKey string) (*DNSProvider, err
 
 // Present creates a TXT record using the specified parameters.
 func (d *DNSProvider) Present(domain, token, keyAuth string) error {
-	fqdn, value, ttl := acme.DNS01Record(domain, keyAuth)
+	fqdn, value, ttl := acmev2.DNS01Record(domain, keyAuth)
 	if ttl < 60 {
 		ttl = 60 // 60 is GleSYS minimum value for ttl
 	}
 	// find authZone
-	authZone, err := acme.FindZoneByFqdn(fqdn, acme.RecursiveNameservers)
+	authZone, err := acmev2.FindZoneByFqdn(fqdn, acmev2.RecursiveNameservers)
 	if err != nil {
 		return fmt.Errorf("GleSYS DNS: findZoneByFqdn failure: %v", err)
 	}
@@ -92,7 +92,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	d.inProgressMu.Lock()
 	defer d.inProgressMu.Unlock()
 	// add TXT record into authZone
-	recordId, err := d.addTXTRecord(domain, acme.UnFqdn(authZone), name, value, ttl)
+	recordId, err := d.addTXTRecord(domain, acmev2.UnFqdn(authZone), name, value, ttl)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 
 // CleanUp removes the TXT record matching the specified parameters.
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, _, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, _, _ := acmev2.DNS01Record(domain, keyAuth)
 	// acquire lock and retrieve authZone
 	d.inProgressMu.Lock()
 	defer d.inProgressMu.Unlock()

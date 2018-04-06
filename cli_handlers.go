@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/urfave/cli"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 	"github.com/xenolf/lego/providers/dns"
 	"github.com/xenolf/lego/providers/http/memcached"
 	"github.com/xenolf/lego/providers/http/webroot"
@@ -28,14 +28,14 @@ func checkFolder(path string) error {
 	return nil
 }
 
-func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
+func setup(c *cli.Context) (*Configuration, *Account, *acmev2.Client) {
 
 	if c.GlobalIsSet("http-timeout") {
-		acme.HTTPClient = http.Client{Timeout: time.Duration(c.GlobalInt("http-timeout")) * time.Second}
+		acmev2.HTTPClient = http.Client{Timeout: time.Duration(c.GlobalInt("http-timeout")) * time.Second}
 	}
 
 	if c.GlobalIsSet("dns-timeout") {
-		acme.DNSTimeout = time.Duration(c.GlobalInt("dns-timeout")) * time.Second
+		acmev2.DNSTimeout = time.Duration(c.GlobalInt("dns-timeout")) * time.Second
 	}
 
 	if len(c.GlobalStringSlice("dns-resolvers")) > 0 {
@@ -46,7 +46,7 @@ func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
 			}
 			resolvers = append(resolvers, resolver)
 		}
-		acme.RecursiveNameservers = resolvers
+		acmev2.RecursiveNameservers = resolvers
 	}
 
 	err := checkFolder(c.GlobalString("path"))
@@ -67,9 +67,9 @@ func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
 		logger().Fatal(err.Error())
 	}
 
-	acme.UserAgent = fmt.Sprintf("le-go/cli %s", c.App.Version)
+	acmev2.UserAgent = fmt.Sprintf("le-go/cli %s", c.App.Version)
 
-	client, err := acme.NewClient(c.GlobalString("server"), acc, keyType)
+	client, err := acmev2.NewClient(c.GlobalString("server"), acc, keyType)
 	if err != nil {
 		logger().Fatalf("Could not create client: %s", err.Error())
 	}
@@ -84,11 +84,11 @@ func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
 			logger().Fatal(err)
 		}
 
-		client.SetChallengeProvider(acme.HTTP01, provider)
+		client.SetChallengeProvider(acmev2.HTTP01, provider)
 
 		// --webroot=foo indicates that the user specifically want to do a HTTP challenge
 		// infer that the user also wants to exclude all other challenges
-		client.ExcludeChallenges([]acme.Challenge{acme.DNS01})
+		client.ExcludeChallenges([]acmev2.Challenge{acmev2.DNS01})
 	}
 	if c.GlobalIsSet("memcached-host") {
 		provider, err := memcached.NewMemcachedProvider(c.GlobalStringSlice("memcached-host"))
@@ -96,11 +96,11 @@ func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
 			logger().Fatal(err)
 		}
 
-		client.SetChallengeProvider(acme.HTTP01, provider)
+		client.SetChallengeProvider(acmev2.HTTP01, provider)
 
 		// --memcached-host=foo:11211 indicates that the user specifically want to do a HTTP challenge
 		// infer that the user also wants to exclude all other challenges
-		client.ExcludeChallenges([]acme.Challenge{acme.DNS01})
+		client.ExcludeChallenges([]acmev2.Challenge{acmev2.DNS01})
 	}
 	if c.GlobalIsSet("http") {
 		if strings.Index(c.GlobalString("http"), ":") == -1 {
@@ -115,17 +115,17 @@ func setup(c *cli.Context) (*Configuration, *Account, *acme.Client) {
 			logger().Fatal(err)
 		}
 
-		client.SetChallengeProvider(acme.DNS01, provider)
+		client.SetChallengeProvider(acmev2.DNS01, provider)
 
 		// --dns=foo indicates that the user specifically want to do a DNS challenge
 		// infer that the user also wants to exclude all other challenges
-		client.ExcludeChallenges([]acme.Challenge{acme.HTTP01})
+		client.ExcludeChallenges([]acmev2.Challenge{acmev2.HTTP01})
 	}
 
 	return conf, acc, client
 }
 
-func saveCertRes(certRes acme.CertificateResource, conf *Configuration) {
+func saveCertRes(certRes acmev2.CertificateResource, conf *Configuration) {
 	// make sure no funny chars are in the cert names (like wildcards ;))
 	domainName := strings.Replace(certRes.Domain, "*", "_", -1)
 
@@ -179,7 +179,7 @@ func saveCertRes(certRes acme.CertificateResource, conf *Configuration) {
 	}
 }
 
-func handleTOS(c *cli.Context, client *acme.Client) bool {
+func handleTOS(c *cli.Context, client *acmev2.Client) bool {
 	// Check for a global accept override
 	if c.GlobalBool("accept-tos") {
 		return true
@@ -277,7 +277,7 @@ func run(c *cli.Context) error {
 		logger().Fatal("Please specify --domains/-d (or --csr/-c if you already have a CSR)")
 	}
 
-	var cert acme.CertificateResource
+	var cert acmev2.CertificateResource
 	var failures map[string]error
 
 	if hasDomains {
@@ -370,7 +370,7 @@ func renew(c *cli.Context) error {
 	}
 
 	if c.IsSet("days") {
-		expTime, err := acme.GetPEMCertExpiration(certBytes)
+		expTime, err := acmev2.GetPEMCertExpiration(certBytes)
 		if err != nil {
 			logger().Printf("Could not get Certification expiration for domain %s", domain)
 		}
@@ -385,7 +385,7 @@ func renew(c *cli.Context) error {
 		logger().Fatalf("Error while loading the meta data for domain %s\n\t%s", domain, err.Error())
 	}
 
-	var certRes acme.CertificateResource
+	var certRes acmev2.CertificateResource
 	err = json.Unmarshal(metaBytes, &certRes)
 	if err != nil {
 		logger().Fatalf("Error while marshalling the meta data for domain %s\n\t%s", domain, err.Error())

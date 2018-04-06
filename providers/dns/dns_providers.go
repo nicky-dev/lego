@@ -4,7 +4,7 @@ package dns
 import (
 	"fmt"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 	"github.com/xenolf/lego/providers/dns/auroradns"
 	"github.com/xenolf/lego/providers/dns/azure"
 	"github.com/xenolf/lego/providers/dns/bluecat"
@@ -38,9 +38,9 @@ import (
 	"github.com/xenolf/lego/providers/dns/vultr"
 )
 
-func NewDNSChallengeProviderByName(name string) (acme.ChallengeProvider, error) {
+func NewDNSChallengeProviderByName(name string) (acmev2.ChallengeProvider, error) {
 	var err error
-	var provider acme.ChallengeProvider
+	var provider acmev2.ChallengeProvider
 	switch name {
 	case "azure":
 		provider, err = azure.NewDNSProvider()
@@ -83,7 +83,7 @@ func NewDNSChallengeProviderByName(name string) (acme.ChallengeProvider, error) 
 	case "linode":
 		provider, err = linode.NewDNSProvider()
 	case "manual":
-		provider, err = acme.NewDNSProviderManual()
+		provider, err = acmev2.NewDNSProviderManual()
 	case "namecheap":
 		provider, err = namecheap.NewDNSProvider()
 	case "namedotcom":

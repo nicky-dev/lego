@@ -15,7 +15,7 @@ import (
 
 	"io/ioutil"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 const bluecatUrlTemplate = "%s/Services/REST/v1"
@@ -31,7 +31,7 @@ type entityResponse struct {
 	Properties string `json:"properties"`
 }
 
-// DNSProvider is an implementation of the acme.ChallengeProvider interface that uses
+// DNSProvider is an implementation of the acmev2.ChallengeProvider interface that uses
 // Bluecat's Address Manager REST API to manage TXT records for a domain.
 type DNSProvider struct {
 	baseUrl    string
@@ -283,7 +283,7 @@ func (d *DNSProvider) getZone(parentId uint, name string) (uint, error) {
 // This will *not* create a subzone to contain the TXT record,
 // so make sure the FQDN specified is within an extant zone.
 func (d *DNSProvider) Present(domain, token, keyAuth string) error {
-	fqdn, value, ttl := acme.DNS01Record(domain, keyAuth)
+	fqdn, value, ttl := acmev2.DNS01Record(domain, keyAuth)
 
 	err := d.login()
 	if err != nil {
@@ -353,7 +353,7 @@ func (d *DNSProvider) deploy(entityId uint) error {
 
 // CleanUp removes the TXT record matching the specified parameters
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, _, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, _, _ := acmev2.DNS01Record(domain, keyAuth)
 
 	err := d.login()
 	if err != nil {

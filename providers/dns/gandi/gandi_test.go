@@ -13,23 +13,23 @@ import (
 	"strings"
 	"testing"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 // stagingServer is the Let's Encrypt staging server used by the live test
 const stagingServer = "https://acme-staging.api.letsencrypt.org/directory"
 
-// user implements acme.User and is used by the live test
+// user implements acmev2.User and is used by the live test
 type user struct {
 	Email        string
-	Registration *acme.RegistrationResource
+	Registration *acmev2.RegistrationResource
 	key          crypto.PrivateKey
 }
 
 func (u *user) GetEmail() string {
 	return u.Email
 }
-func (u *user) GetRegistration() *acme.RegistrationResource {
+func (u *user) GetRegistration() *acmev2.RegistrationResource {
 	return u.Registration
 }
 func (u *user) GetPrivateKey() crypto.PrivateKey {
@@ -116,7 +116,7 @@ func TestDNSProviderLive(t *testing.T) {
 		key:   privateKey,
 	}
 	// create a client using staging server
-	client, err := acme.NewClient(stagingServer, &myUser, acme.RSA2048)
+	client, err := acmev2.NewClient(stagingServer, &myUser, acmev2.RSA2048)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -124,11 +124,11 @@ func TestDNSProviderLive(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = client.SetChallengeProvider(acme.DNS01, provider)
+	err = client.SetChallengeProvider(acmev2.DNS01, provider)
 	if err != nil {
 		t.Fatal(err)
 	}
-	client.ExcludeChallenges([]acme.Challenge{acme.HTTP01})
+	client.ExcludeChallenges([]acmev2.Challenge{acmev2.HTTP01})
 	// register and agree tos
 	reg, err := client.Register(true)
 	if err != nil {

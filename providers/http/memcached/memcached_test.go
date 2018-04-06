@@ -8,7 +8,7 @@ import (
 
 	"github.com/rainycape/memcache"
 	"github.com/stretchr/testify/assert"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 var (
@@ -49,7 +49,7 @@ func TestMemcachedPresentSingleHost(t *testing.T) {
 	p, err := NewMemcachedProvider(memcachedHosts[0:1])
 	assert.NoError(t, err)
 
-	challengePath := path.Join("/", acme.HTTP01ChallengePath(token))
+	challengePath := path.Join("/", acmev2.HTTP01ChallengePath(token))
 
 	err = p.Present(domain, token, keyAuth)
 	assert.NoError(t, err)
@@ -67,7 +67,7 @@ func TestMemcachedPresentMultiHost(t *testing.T) {
 	p, err := NewMemcachedProvider(memcachedHosts)
 	assert.NoError(t, err)
 
-	challengePath := path.Join("/", acme.HTTP01ChallengePath(token))
+	challengePath := path.Join("/", acmev2.HTTP01ChallengePath(token))
 
 	err = p.Present(domain, token, keyAuth)
 	assert.NoError(t, err)
@@ -88,7 +88,7 @@ func TestMemcachedPresentPartialFailureMultiHost(t *testing.T) {
 	p, err := NewMemcachedProvider(hosts)
 	assert.NoError(t, err)
 
-	challengePath := path.Join("/", acme.HTTP01ChallengePath(token))
+	challengePath := path.Join("/", acmev2.HTTP01ChallengePath(token))
 
 	err = p.Present(domain, token, keyAuth)
 	assert.NoError(t, err)

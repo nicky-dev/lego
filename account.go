@@ -7,14 +7,14 @@ import (
 	"os"
 	"path"
 
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 // Account represents a users local saved credentials
 type Account struct {
 	Email        string `json:"email"`
 	key          crypto.PrivateKey
-	Registration *acme.RegistrationResource `json:"registration"`
+	Registration *acmev2.RegistrationResource `json:"registration"`
 
 	conf *Configuration
 }
@@ -81,10 +81,10 @@ func NewAccount(email string, conf *Configuration) *Account {
 	return &acc
 }
 
-func tryRecoverAccount(privKey crypto.PrivateKey, conf *Configuration) (*acme.RegistrationResource, error) {
+func tryRecoverAccount(privKey crypto.PrivateKey, conf *Configuration) (*acmev2.RegistrationResource, error) {
 	// couldn't load account but got a key. Try to look the account up.
 	serverURL := conf.context.GlobalString("server")
-	client, err := acme.NewClient(serverURL, &Account{key: privKey, conf: conf}, acme.RSA2048)
+	client, err := acmev2.NewClient(serverURL, &Account{key: privKey, conf: conf}, acmev2.RSA2048)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func tryRecoverAccount(privKey crypto.PrivateKey, conf *Configuration) (*acme.Re
 	return reg, nil
 }
 
-/** Implementation of the acme.User interface **/
+/** Implementation of the acmev2.User interface **/
 
 // GetEmail returns the email address for the account
 func (a *Account) GetEmail() string {
@@ -109,7 +109,7 @@ func (a *Account) GetPrivateKey() crypto.PrivateKey {
 }
 
 // GetRegistration returns the server registration
-func (a *Account) GetRegistration() *acme.RegistrationResource {
+func (a *Account) GetRegistration() *acmev2.RegistrationResource {
 	return a.Registration
 }
 

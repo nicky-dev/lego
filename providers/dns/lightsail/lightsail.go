@@ -11,14 +11,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lightsail"
-	acme "github.com/xenolf/lego/acmev2"
+	"github.com/xenolf/lego/acmev2"
 )
 
 const (
 	maxRetries = 5
 )
 
-// DNSProvider implements the acme.ChallengeProvider interface
+// DNSProvider implements the acmev2.ChallengeProvider interface
 type DNSProvider struct {
 	client *lightsail.Lightsail
 }
@@ -71,7 +71,7 @@ func NewDNSProvider() (*DNSProvider, error) {
 
 // Present creates a TXT record using the specified parameters
 func (r *DNSProvider) Present(domain, token, keyAuth string) error {
-	fqdn, value, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, value, _ := acmev2.DNS01Record(domain, keyAuth)
 	value = `"` + value + `"`
 	err := r.newTxtRecord(domain, fqdn, value)
 	return err
@@ -79,7 +79,7 @@ func (r *DNSProvider) Present(domain, token, keyAuth string) error {
 
 // CleanUp removes the TXT record matching the specified parameters
 func (r *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, value, _ := acme.DNS01Record(domain, keyAuth)
+	fqdn, value, _ := acmev2.DNS01Record(domain, keyAuth)
 	value = `"` + value + `"`
 	params := &lightsail.DeleteDomainEntryInput{
 		DomainName: aws.String(domain),
