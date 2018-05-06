@@ -1,12 +1,14 @@
 FROM alpine:3.6
 
 ENV GOPATH /go
-ENV LEGO_VERSION tags/v0.4.1
+ENV LEGO_VERSION nicky-fork
 
 RUN apk update && apk add --no-cache --virtual run-dependencies ca-certificates && \
-    apk add --no-cache --virtual build-dependencies go git musl-dev && \
-    go get -u github.com/nicky-dev/lego && \
-    cd ${GOPATH}/src/github.com/nicky-dev/lego && \
+    apk add --no-cache --virtual build-dependencies go git musl-dev
+
+RUN go get -u github.com/nicky-dev/lego
+
+RUN cd ${GOPATH}/src/github.com/nicky-dev/lego && \
     git checkout ${LEGO_VERSION} && \
     go build -o /usr/bin/lego . && \
     apk del build-dependencies && \
