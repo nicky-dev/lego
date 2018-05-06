@@ -16,6 +16,7 @@ import (
 	"github.com/xenolf/lego/providers/dns/dnspod"
 	"github.com/xenolf/lego/providers/dns/duckdns"
 	"github.com/xenolf/lego/providers/dns/dyn"
+	"github.com/xenolf/lego/providers/dns/dynu"
 	"github.com/xenolf/lego/providers/dns/exec"
 	"github.com/xenolf/lego/providers/dns/exoscale"
 	"github.com/xenolf/lego/providers/dns/fastdns"
@@ -64,6 +65,8 @@ func NewDNSChallengeProviderByName(name string) (acmev2.ChallengeProvider, error
 		provider, err = duckdns.NewDNSProvider()
 	case "dyn":
 		provider, err = dyn.NewDNSProvider()
+	case "dynu":
+		provider, err = dynu.NewDNSProvider()
 	case "fastdns":
 		provider, err = fastdns.NewDNSProvider()
 	case "exoscale":
