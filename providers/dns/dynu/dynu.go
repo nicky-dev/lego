@@ -1,5 +1,5 @@
-// Package dyn implements a DNS provider for solving the DNS-01 challenge
-// using Dyn Managed DNS.
+// Package dynu implements a DNS provider for solving the DNS-01 challenge
+// using Dynu Managed DNS.
 package dynu
 
 import (
@@ -16,7 +16,7 @@ import (
 
 var dynuBaseURL = "https://api.dynu.com/v1/"
 
-type dynResponse struct {
+type dynuResponse struct {
 	// One of 'success', 'failure', or 'incomplete'
 	Status string `json:"status"`
 
@@ -31,7 +31,7 @@ type dynResponse struct {
 }
 
 // DNSProvider is an implementation of the acmev2.ChallengeProvider interface that uses
-// Dyn's Managed DNS API to manage TXT records for a domain.
+// Dynu's Managed DNS API to manage TXT records for a domain.
 type DNSProvider struct {
 	customerName string
 	userName     string
@@ -39,21 +39,21 @@ type DNSProvider struct {
 	token        string
 }
 
-// NewDNSProvider returns a DNSProvider instance configured for Dyn DNS.
-// Credentials must be passed in the environment variables: DYN_CUSTOMER_NAME,
-// DYN_USER_NAME and DYN_PASSWORD.
+// NewDNSProvider returns a DNSProvider instance configured for Dynu DNS.
+// Credentials must be passed in the environment variables: DYNU_CUSTOMER_NAME,
+// DYNU_USER_NAME and DYNU_PASSWORD.
 func NewDNSProvider() (*DNSProvider, error) {
-	customerName := os.Getenv("DYN_CUSTOMER_NAME")
-	userName := os.Getenv("DYN_USER_NAME")
-	password := os.Getenv("DYN_PASSWORD")
+	customerName := os.Getenv("DYNU_CUSTOMER_NAME")
+	userName := os.Getenv("DYNU_USER_NAME")
+	password := os.Getenv("DYNU_PASSWORD")
 	return NewDNSProviderCredentials(customerName, userName, password)
 }
 
 // NewDNSProviderCredentials uses the supplied credentials to return a
-// DNSProvider instance configured for Dyn DNS.
+// DNSProvider instance configured for Dynu DNS.
 func NewDNSProviderCredentials(customerName, userName, password string) (*DNSProvider, error) {
 	if customerName == "" || userName == "" || password == "" {
-		return nil, fmt.Errorf("DynDNS credentials missing")
+		return nil, fmt.Errorf("DynuDNS credentials missing")
 	}
 
 	return &DNSProvider{
@@ -63,8 +63,8 @@ func NewDNSProviderCredentials(customerName, userName, password string) (*DNSPro
 	}, nil
 }
 
-func (d *DNSProvider) sendRequest(method, resource string, payload interface{}) (*dynResponse, error) {
-	url := fmt.Sprintf("%s/%s", dynBaseURL, resource)
+func (d *DNSProvider) sendRequest(method, resource string, payload interface{}) (*dynuResponse, error) {
+	url := fmt.Sprintf("%s/%s", dynuBaseURL, resource)
 
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -88,31 +88,31 @@ func (d *DNSProvider) sendRequest(method, resource string, payload interface{}) 
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 500 {
-		return nil, fmt.Errorf("Dyn API request failed with HTTP status code %d", resp.StatusCode)
+		return nil, fmt.Errorf("Dynu API request failed with HTTP status code %d", resp.StatusCode)
 	}
 
-	var dynRes dynResponse
-	err = json.NewDecoder(resp.Body).Decode(&dynRes)
+	var dynuRes dynuResponse
+	err = json.NewDecoder(resp.Body).Decode(&dynuRes)
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.StatusCode >= 400 {
-		return nil, fmt.Errorf("Dyn API request failed with HTTP status code %d: %s", resp.StatusCode, dynRes.Messages)
+		return nil, fmt.Errorf("Dynu API request failed with HTTP status code %d: %s", resp.StatusCode, dynuRes.Messages)
 	} else if resp.StatusCode == 307 {
 		// TODO add support for HTTP 307 response and long running jobs
-		return nil, fmt.Errorf("Dyn API request returned HTTP 307. This is currently unsupported")
+		return nil, fmt.Errorf("Dynu API request returned HTTP 307. This is currently unsupported")
 	}
 
-	if dynRes.Status == "failure" {
+	if dynuRes.Status == "failure" {
 		// TODO add better error handling
-		return nil, fmt.Errorf("Dyn API request failed: %s", dynRes.Messages)
+		return nil, fmt.Errorf("Dynu API request failed: %s", dynuRes.Messages)
 	}
 
-	return &dynRes, nil
+	return &dynuRes, nil
 }
 
-// Starts a new Dyn API Session. Authenticates using customerName, userName,
+// Starts a new Dynu API Session. Authenticates using customerName, userName,
 // password and receives a token to be used in for subsequent requests.
 func (d *DNSProvider) login() error {
 	type creds struct {
@@ -127,13 +127,13 @@ func (d *DNSProvider) login() error {
 	}
 
 	payload := &creds{Customer: d.customerName, User: d.userName, Pass: d.password}
-	dynRes, err := d.sendRequest("POST", "Session", payload)
+	dynuRes, err := d.sendRequest("POST", "Session", payload)
 	if err != nil {
 		return err
 	}
 
 	var s session
-	err = json.Unmarshal(dynRes.Data, &s)
+	err = json.Unmarshal(dynuRes.Data, &s)
 	if err != nil {
 		return err
 	}
@@ -143,14 +143,14 @@ func (d *DNSProvider) login() error {
 	return nil
 }
 
-// Destroys Dyn Session
+// Destroys Dynu Session
 func (d *DNSProvider) logout() error {
 	if len(d.token) == 0 {
 		// nothing to do
 		return nil
 	}
 
-	url := fmt.Sprintf("%s/Session", dynBaseURL)
+	url := fmt.Sprintf("%s/Session", dynuBaseURL)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -166,7 +166,7 @@ func (d *DNSProvider) logout() error {
 	resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Dyn API request failed to delete session with HTTP status code %d", resp.StatusCode)
+		return fmt.Errorf("Dynu API request failed to delete session with HTTP status code %d", resp.StatusCode)
 	}
 
 	d.token = ""
@@ -245,7 +245,7 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 	}
 
 	resource := fmt.Sprintf("TXTRecord/%s/%s/", authZone, fqdn)
-	url := fmt.Sprintf("%s/%s", dynBaseURL, resource)
+	url := fmt.Sprintf("%s/%s", dynuBaseURL, resource)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -261,7 +261,7 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 	resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Dyn API request failed to delete TXT record HTTP status code %d", resp.StatusCode)
+		return fmt.Errorf("Dynu API request failed to delete TXT record HTTP status code %d", resp.StatusCode)
 	}
 
 	err = d.publish(authZone, "Removed TXT record for ACME dns-01 challenge using lego client")
