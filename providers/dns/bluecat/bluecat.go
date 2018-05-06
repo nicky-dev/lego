@@ -15,7 +15,7 @@ import (
 
 	"io/ioutil"
 
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 const bluecatUrlTemplate = "%s/Services/REST/v1"

@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 var dynuBaseURL = "https://api.dynu.com/v1/"

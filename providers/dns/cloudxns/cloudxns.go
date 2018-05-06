@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 const cloudXNSBaseURL = "https://www.cloudxns.net/api2/"

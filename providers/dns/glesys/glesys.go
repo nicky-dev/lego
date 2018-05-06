@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 // GleSYS API reference: https://github.com/GleSYS/API/wiki/API-Documentation

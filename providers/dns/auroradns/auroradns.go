@@ -8,7 +8,7 @@ import (
 	"github.com/edeckers/auroradnsclient"
 	"github.com/edeckers/auroradnsclient/records"
 	"github.com/edeckers/auroradnsclient/zones"
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 // DNSProvider describes a provider for AuroraDNS

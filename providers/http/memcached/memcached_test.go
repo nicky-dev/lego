@@ -8,7 +8,7 @@ import (
 
 	"github.com/rainycape/memcache"
 	"github.com/stretchr/testify/assert"
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 var (

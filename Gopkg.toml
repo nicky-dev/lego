@@ -1,4 +1,4 @@
 [[constraint]]
   branch = "nicky-fork"
-  name = "github.com/xenolf/lego"
+  name = "github.com/nicky-dev/lego"
   source = "github.com/nicky-dev/lego"

@@ -13,7 +13,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/xenolf/lego/acmev2"
+	"github.com/nicky-dev/lego/acmev2"
 )
 
 // GoDaddyAPIURL represents the API endpoint to call.
